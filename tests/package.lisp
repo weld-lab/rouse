@@ -3,3 +3,6 @@
 
 
 (in-package #:rouse/tests)
+
+(fiveam:def-suite :rouse-tests)
+(fiveam:def-suite :rouse-tests.simulation :in :rouse-tests)
