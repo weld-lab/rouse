@@ -3,7 +3,9 @@
     :author "Erwan Le Doeuff (weld)"
     :license "MIT License"
     :serial t
-    :components ((:file "package")))
+    :components ((:file "package")
+		 (:module "simulation"
+		  :components ((:file "package")))))
 
 
 (asdf:defsystem "rouse/tests"
