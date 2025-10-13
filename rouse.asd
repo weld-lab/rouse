@@ -5,7 +5,9 @@
     :serial t
     :components ((:file "package")
 		 (:module "simulation"
-		  :components ((:file "package")))))
+		  :components ((:file "package")
+			       (:file "state")
+			       (:file "simulation")))))
 
 
 (asdf:defsystem "rouse/tests"
