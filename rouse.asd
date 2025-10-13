@@ -8,7 +8,11 @@
 	       (:module "simulation"
 		:components ((:file "package")
 			     (:file "state")
-			     (:file "simulation")))))
+			     (:file "simulation")))
+	       (:module "topology"
+		:components ((:file "package")
+			     (:file "bead")
+			     (:file "chain")))))
 
 
 (asdf:defsystem "rouse/tests"
