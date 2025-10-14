@@ -2,7 +2,9 @@
 
 
 (defclass bead ()
-  ((bead-x :accessor bead-x
+  ((bead-mass :accessor bead-mass
+	      :initarg :bead-mass)
+   (bead-x :accessor bead-x
 	   :initarg :bead-x)
    (bead-y :accessor bead-y
 	   :initarg :bead-y)
@@ -16,6 +18,7 @@
 	    :initarg :bead-vz)))
 
 
-(defmacro make-bead (&key (x 0.0) (y 0.0) (z 0.0) (vx 0.0) (vy 0.0) (vz 0.0))
-  `(make-instance 'bead :bead-x ,x :bead-y ,y :bead-z ,z
+(defmacro make-bead (&key (mass 1.0) (x 0.0) (y 0.0) (z 0.0) (vx 0.0) (vy 0.0) (vz 0.0))
+  `(make-instance 'bead :bead-mass ,mass
+		  :bead-x ,x :bead-y ,y :bead-z ,z
 		  :bead-vx ,vx :bead-vy ,vy :bead-vz ,vz))
