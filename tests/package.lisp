@@ -7,3 +7,4 @@
 (fiveam:def-suite :rouse-tests)
 (fiveam:def-suite :rouse-tests.simulation :in :rouse-tests)
 (fiveam:def-suite :rouse-tests.viewer :in :rouse-tests)
+(fiveam:def-suite :rouse-tests.topology :in :rouse-tests)
