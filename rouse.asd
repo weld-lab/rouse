@@ -16,6 +16,8 @@
 			     (:file "chain")))
 	       (:module "viewer"
 		:components ((:file "package")
+			     (:file "global-view")
+			     (:file "ortho-view")
 			     (:file "viewer")))))
 
 
