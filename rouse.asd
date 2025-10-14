@@ -25,6 +25,7 @@
 (asdf:defsystem "rouse/tests"
   :depends-on ("rouse" "fiveam")
   :components ((:file "tests/package")
+	       (:file "tests/topology")
 	       (:file "tests/simulation")
 	       (:file "tests/viewer"))
   :perform (test-op (o c)
