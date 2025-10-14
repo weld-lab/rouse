@@ -9,15 +9,12 @@
 			       :fovy 10.0
 			       :projection :camera-orthographic)))
 
-    (print "Opening window...")
-    (with-window (*params-window-width*
-		  *params-window-height*
-		  *params-window-title*)
-      (set-target-fps *params-target-fps*)
-      (loop until (window-should-close)
-	    do (with-drawing
-		 (clear-background :black)
-		 (with-mode-3d (camera)
-		   (let ((state (sim:simulation-current-state sim)))
-		     (render-chain (sim:state-chain state)))))))
-    (print "Closing window...")))
+    (destructuring-bind (width height title) *params-window-params*
+      (with-window (width height title)
+	(set-target-fps *params-target-fps*)
+	(loop until (window-should-close)
+	      do (let ((state (sim:simulation-current-state sim)))
+		   (with-drawing
+		     (clear-background :black)
+		     (with-mode-3d (camera)
+		       (render-chain (sim:state-chain state))))))))))
