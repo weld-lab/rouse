@@ -9,5 +9,5 @@
 				   :temperature 1
 				   :gamma 0
 				   :dt 1.0d-3))
-	 (state (sim:simulation-current-state sim)))
+	 (state (sim:current-state sim)))
     (is (= (sim::state-temperature state) 1))))

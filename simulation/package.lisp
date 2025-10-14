@@ -3,8 +3,8 @@
   (:use #:cl)
   (:export #:make-simulation
 	   #:simulation
-	   #:simulation-current-state
-	   #:simulation-history
+	   #:simulation-cursor
+	   #:current-state
 
 	   #:state
 	   #:state-chain))

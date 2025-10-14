@@ -13,7 +13,7 @@
       (with-window (width height title)
 	(set-target-fps *params-target-fps*)
 	(loop until (window-should-close)
-	      do (let ((state (sim:simulation-current-state sim)))
+	      do (let ((state (sim:current-state sim)))
 		   (with-drawing
 		     (clear-background :black)
 		     (with-mode-3d (camera)
