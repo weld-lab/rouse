@@ -2,8 +2,9 @@
   :description "Solving Langevin dynamics for the Rouse model"
   :author "Erwan Le Doeuff (weld)"
   :license "MIT License"
-  :serial t
   :in-order-to ((test-op (test-op "rouse/tests")))
+  :serial t
+  :depends-on ("cl-raylib")
   :components ((:file "package")
 	       (:module "simulation"
 		:components ((:file "package")
@@ -12,7 +13,9 @@
 	       (:module "topology"
 		:components ((:file "package")
 			     (:file "bead")
-			     (:file "chain")))))
+			     (:file "chain")))
+	       (:module "viewer"
+		:components ((:file "package")))))
 
 
 (asdf:defsystem "rouse/tests"
