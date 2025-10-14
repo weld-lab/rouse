@@ -4,7 +4,10 @@
   (:export #:make-simulation
 	   #:simulation
 	   #:simulation-current-state
-	   #:simulation-history))
+	   #:simulation-history
+
+	   #:state
+	   #:state-chain))
 
 
 (in-package #:rouse.simulation)
