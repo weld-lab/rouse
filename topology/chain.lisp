@@ -28,15 +28,42 @@
          (sum-y 0.0)
          (sum-z 0.0)
          (total-mass (total-mass chain)))
+
+
+    (when (zerop total-mass)
+      (error 'division-by-zero
+             :operation '/
+             :operands (list 0 total-mass)))
     
     (dolist (bead beads)
       (let ((m (bead-mass bead)))
         (incf sum-x (* m (bead-x bead)))
         (incf sum-y (* m (bead-y bead)))
         (incf sum-z (* m (bead-z bead)))))
+
+    (list (/ sum-x total-mass)
+          (/ sum-y total-mass)
+          (/ sum-z total-mass))))
+
+
+
+(defmethod radius-of-gyration ((chain chain))
+  (let* ((beads (chain-beads chain))
+         (com (center-of-mass chain))
+         (total-mass (total-mass chain))
+         (sum 0.0))
+
+
+    (when (zerop total-mass)
+      (error 'division-by-zero
+             :operation '/
+             :operands (list 0 total-mass)))
     
-    (if (zerop total-mass)
-        (list 0.0 0.0 0.0)
-        (list (/ sum-x total-mass)
-              (/ sum-y total-mass)
-              (/ sum-z total-mass)))))
+    (dolist (bead beads)
+      (let* ((m (bead-mass bead))
+             (dx (- (bead-x bead) (first com)))
+             (dy (- (bead-y bead) (second com)))
+             (dz (- (bead-z bead) (third com))))
+        (incf sum (* m (+ (* dx dx) (* dy dy) (* dz dz))))))
+    
+    (sqrt (/ sum total-mass))))
