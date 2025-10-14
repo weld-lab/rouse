@@ -17,6 +17,7 @@
 	       (:module "viewer"
 		:components ((:file "package")
 			     (:file "params")
+			     (:file "rendering")
 			     (:file "global-view")
 			     (:file "ortho-view")
 			     (:file "viewer")))))
