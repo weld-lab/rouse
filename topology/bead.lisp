@@ -22,3 +22,7 @@
   `(make-instance 'bead :bead-mass ,mass
 		  :bead-x ,x :bead-y ,y :bead-z ,z
 		  :bead-vx ,vx :bead-vy ,vy :bead-vz ,vz))
+
+
+(defmethod get-position ((bead bead))
+  (list (bead-x bead) (bead-y bead) (bead-z bead)))
