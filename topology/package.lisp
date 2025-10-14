@@ -3,6 +3,7 @@
   (:use #:cl)
   (:export #:make-chain
 	   #:total-mass
+	   #:remove-center-of-mass
 	   #:center-of-mass
 	   #:radius-of-gyration))
 

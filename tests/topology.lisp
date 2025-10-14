@@ -25,9 +25,20 @@
   (let ((chain (top:make-chain
 		(:x 1.0 :mass -1.0)
 		(:x 0.0 :mass  1.0))))
-    (signals division-by-zero (top:center-of-mass chain))))
+    (signals division-by-zero (top:center-of-mass chain)))
+
+
+  (let ((chain (top:make-chain
+		(:x 1.0 :mass 1.0)
+		(:x 1.0 :mass 2.0))))
+    (is (equal '(0.0 0.0 0.0)
+	       (top:center-of-mass
+		(top:remove-center-of-mass chain))))))
 
 
 (test chain-radius-of-gyration
   (let ((chain (top:make-chain (:mass 0.0))))
-    (signals division-by-zero (top:radius-of-gyration chain))))
+    (signals division-by-zero (top:radius-of-gyration chain)))
+
+  (let ((chain (top:make-chain (:x 0.0) (:x 1.0))))
+    (is (= 0.5 (top:radius-of-gyration chain)))))

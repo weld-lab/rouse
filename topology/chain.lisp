@@ -45,6 +45,23 @@
           (/ sum-y total-mass)
           (/ sum-z total-mass))))
 
+(defmethod remove-center-of-mass ((chain chain))
+  (let* ((com (center-of-mass chain))
+         (cx (first com))
+         (cy (second com))
+         (cz (third com)))
+    (make-instance 'chain
+		   :chain-beads
+		   (mapcar (lambda (bead)
+			     (make-instance 'bead
+					    :bead-x (- (bead-x bead) cx)
+					    :bead-y (- (bead-y bead) cy)
+					    :bead-z (- (bead-z bead) cz)
+					    :bead-vx (bead-vx bead)
+					    :bead-vy (bead-vy bead)
+					    :bead-vz (bead-vz bead)
+					    :bead-mass (bead-mass bead)))
+			   (chain-beads chain)))))
 
 
 (defmethod radius-of-gyration ((chain chain))
