@@ -1,5 +1,5 @@
 (in-package #:rouse.viewer)
 
 
-(defun ortho-view-mode ()
+(defmethod ortho-view-mode ((sim sim:simulation) width height)
   (error "Ortho mode not implemented"))

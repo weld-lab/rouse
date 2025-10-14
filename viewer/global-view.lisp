@@ -1,5 +1,5 @@
 (in-package #:rouse.viewer)
 
 
-(defun global-view-mode ()
+(defmethod global-view-mode ((sim sim:simulation) width height)
   (error "Global mode not implemented"))
