@@ -19,6 +19,7 @@
 			     (:file "params")
 			     (:file "rendering")
 			     (:file "global-view")
+			     (:file "ortho-state")
 			     (:file "ortho-view")
 			     (:file "viewer")))))
 
