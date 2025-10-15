@@ -4,8 +4,11 @@
   :license "MIT License"
   :in-order-to ((test-op (test-op "rouse/tests")))
   :serial t
-  :depends-on ("cl-raylib" "3d-vectors" "bt-semaphore")
+  :depends-on ("swank" "chanl" "cl-raylib" "3d-vectors" "bt-semaphore")
   :components ((:file "package")
+	       (:module "control"
+		:components ((:file "package")
+			     (:file "control")))
 	       (:module "simulation"
 		:components ((:file "package")
 			     (:file "state")
@@ -21,7 +24,8 @@
 			     (:file "global-view")
 			     (:file "ortho-state")
 			     (:file "ortho-view")
-			     (:file "viewer")))))
+			     (:file "viewer")))
+	       (:file "init")))
 
 
 (asdf:defsystem "rouse/tests"
