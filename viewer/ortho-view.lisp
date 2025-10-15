@@ -2,24 +2,14 @@
 
 
 
-(defclass ortho-state ()
-  ((ortho-state-i :accessor ortho-state-i
-                  :initform 0)
-   (ortho-state-faces :accessor ortho-state-faces
-                      :initform *params-ortho-faces*)))
-
-
-
-(defmethod ortho-get-face ((os ortho-state))
-  (aref (ortho-state-faces os) (ortho-state-i os)))
-
-
-
-(defmethod ortho-go-next-face ((os ortho-state))
-  (incf (ortho-state-i os))
-  (when (>= (ortho-state-i os) (length (ortho-state-faces os)))
-    (setf (ortho-state-i os) 0))
-  (ortho-get-face os))
+(defmethod ortho-initialize-camera ((sim sim:simulation) (os ortho-state))
+  (let ((face (ortho-get-face os)))
+    (make-camera3d
+     :position (first face)
+     :target (vec 0.0 0.0 0.0)
+     :up (second face)
+     :fovy 10.0
+     :projection :camera-orthographic)))
 
 
 
@@ -41,17 +31,6 @@
       (clear-background :black)
       (with-mode-3d (camera)
         (render-chain chain)))))
-
-
-
-(defmethod ortho-initialize-camera ((sim sim:simulation) (os ortho-state))
-  (let ((face (ortho-get-face os)))
-    (make-camera3d
-     :position (first face)
-     :target (vec 0.0 0.0 0.0)
-     :up (second face)
-     :fovy 10.0
-     :projection :camera-orthographic)))
 
 
 
