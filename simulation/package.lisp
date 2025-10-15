@@ -5,6 +5,9 @@
 	   #:simulation
 	   #:simulation-cursor
 	   #:current-state
+	   #:forward
+	   #:backward
+	   #:add-to-timeline
 
 	   #:state
 	   #:state-chain))
