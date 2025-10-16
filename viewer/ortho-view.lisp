@@ -8,7 +8,8 @@
      :position (first face)
      :target (vec 0.0 0.0 0.0)
      :up (second face)
-     :fovy 10.0
+     :fovy (* *params-ortho-fovy-scaling-factor*
+	      (top:radius-of-gyration (sim:state-chain (sim:current-state sim))))
      :projection :camera-orthographic)))
 
 

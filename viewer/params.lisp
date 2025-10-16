@@ -11,6 +11,7 @@
 
 (defparameter *params-log-level* :log-trace)
 (defparameter *params-target-fps* 60)
+(defparameter *params-ortho-fovy-scaling-factor* 6)
 
 
 
