@@ -4,6 +4,7 @@
   (:export #:make-simulation
 	   #:simulation
 	   #:simulation-cursor
+	   #:simulation-timeline
 	   #:current-state
 	   #:forward
 	   #:backward

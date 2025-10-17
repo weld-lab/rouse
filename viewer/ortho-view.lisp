@@ -12,17 +12,54 @@
 	      (top:radius-of-gyration (sim:state-chain (sim:current-state sim))))
      :projection :camera-orthographic)))
 
-
+(defmethod ortho-set-camera-face ((os ortho-state) camera i)
+  (let ((new-face (ortho-set-face os i)))
+    (setf (camera3d-position camera) (first new-face))
+    (setf (camera3d-up camera) (second new-face))))
 
 (defmethod ortho-input ((sim sim:simulation) (os ortho-state)
 			camera)
   (when (is-key-pressed :key-space)
     (let ((new-face (ortho-go-next-face os)))
       (setf (camera3d-position camera) (first new-face))
-      (setf (camera3d-up camera) (second new-face))
-      (format t "~&Switched to face ~A~%" (third new-face)))))
+      (setf (camera3d-up camera) (second new-face))))
+
+  (when (is-key-pressed :key-one)
+    (ortho-set-camera-face os camera 0))
+
+  (when (is-key-pressed :key-two)
+    (ortho-set-camera-face os camera 1))
+
+  (when (is-key-pressed :key-three)
+    (ortho-set-camera-face os camera 2))
+
+  (when (is-key-pressed :key-four)
+    (ortho-set-camera-face os camera 3))
+
+  (when (is-key-pressed :key-five)
+    (ortho-set-camera-face os camera 4))
+
+  (when (is-key-pressed :key-six)
+    (ortho-set-camera-face os camera 5))
+
+  (when (is-key-pressed :key-right)
+    (sim:forward sim))
+
+  (when (is-key-pressed :key-left)
+    (sim:backward sim)))
 
 
+
+(defmethod hud-draw ((sim sim:simulation) (os ortho-state)
+		       camera)
+  (draw-text (third (ortho-get-face os))
+	     10 0 30 :red)
+
+  (draw-text (format nil "t=~a"
+		     (-
+		      (1- (length (sim:simulation-timeline sim)))
+		      (sim:simulation-cursor sim)))
+	     10 30 30 :blue))
 
 (defmethod ortho-draw ((sim sim:simulation) (os ortho-state)
 		       camera)
@@ -30,6 +67,7 @@
          (chain (top:remove-center-of-mass (sim:state-chain state))))
     (with-drawing
       (clear-background :black)
+      (hud-draw sim os camera)
       (with-mode-3d (camera)
         (render-chain chain)))))
 
