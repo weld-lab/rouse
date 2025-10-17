@@ -20,9 +20,9 @@
 	       (:module "viewer"
 		:components ((:file "package")
 			     (:file "params")
+			     (:file "ortho-state")
 			     (:file "rendering")
 			     (:file "global-view")
-			     (:file "ortho-state")
 			     (:file "ortho-view")
 			     (:file "viewer")))
 	       (:file "init")))
