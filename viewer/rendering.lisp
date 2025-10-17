@@ -2,9 +2,11 @@
 
 
 (defmethod render-bead ((bead top:bead) &key (color :gold) (radius 0.5))
+  "Render a single bead as a colored sphere with black wireframe outlines."
   (let ((position (apply #'vec (top:get-position bead))))
     (draw-sphere position radius color)
     (draw-sphere-wires position radius 5 10 :black)))
+
 
 
 (defmethod render-chain ((chain top:chain)
@@ -12,8 +14,8 @@
 			   (bond-radius 0.08)
 			   (bead-color :gold)
 			   (bead-radius 0.5))
-
-  ; draw bonds
+  "Render the polymer chain in 3D, displaying bonds as cylinders and beads as spheres."
+  ;; draw bonds
   (let ((beads (top:chain-beads chain)))
     (loop for i from 0 below (1- (length beads))
           for bead1 = (nth i beads)
@@ -22,6 +24,19 @@
           for p2 = (apply #'vec (top:get-position bead2))
           do (draw-cylinder-ex p1 p2 bond-radius bond-radius 8 bond-color)))
 
-  ; draw beads
+  ;; draw beads
   (dolist (bead (top:chain-beads chain))
     (render-bead bead :color bead-color :radius bead-radius)))
+
+
+
+(defmethod render-hud ((sim sim:simulation) (os ortho-state)
+		       camera)
+  "Render the on-screen HUD showing the current camera face and simulation time index."
+  (draw-text (third (ortho-get-face os))
+	     10 0 30 :red)
+  (draw-text (format nil "t=~a"
+		     (-
+		      (1- (length (sim:simulation-timeline sim)))
+		      (sim:simulation-cursor sim)))
+	     10 30 30 :blue))

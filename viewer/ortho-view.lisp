@@ -3,6 +3,7 @@
 
 
 (defmethod ortho-initialize-camera ((sim sim:simulation) (os ortho-state))
+  "Initialize an orthographic camera oriented according to the current face of `os`."
   (let ((face (ortho-get-face os)))
     (make-camera3d
      :position (first face)
@@ -12,13 +13,19 @@
 	      (top:radius-of-gyration (sim:state-chain (sim:current-state sim))))
      :projection :camera-orthographic)))
 
+
+
 (defmethod ortho-set-camera-face ((os ortho-state) camera i)
+  "Set the camera orientation to the i-th orthographic face."
   (let ((new-face (ortho-set-face os i)))
     (setf (camera3d-position camera) (first new-face))
     (setf (camera3d-up camera) (second new-face))))
 
+
+
 (defmethod ortho-input ((sim sim:simulation) (os ortho-state)
 			camera)
+  "Handle keyboard input for camera control and time navigation in orthographic view."
   (when (is-key-pressed :key-space)
     (let ((new-face (ortho-go-next-face os)))
       (setf (camera3d-position camera) (first new-face))
@@ -50,30 +57,21 @@
 
 
 
-(defmethod hud-draw ((sim sim:simulation) (os ortho-state)
-		       camera)
-  (draw-text (third (ortho-get-face os))
-	     10 0 30 :red)
-
-  (draw-text (format nil "t=~a"
-		     (-
-		      (1- (length (sim:simulation-timeline sim)))
-		      (sim:simulation-cursor sim)))
-	     10 30 30 :blue))
-
 (defmethod ortho-draw ((sim sim:simulation) (os ortho-state)
 		       camera)
+  "Render the current simulation state and HUD using the orthographic camera."
   (let* ((state (sim:current-state sim))
          (chain (top:remove-center-of-mass (sim:state-chain state))))
     (with-drawing
       (clear-background :black)
-      (hud-draw sim os camera)
+      (render-hud sim os camera)
       (with-mode-3d (camera)
         (render-chain chain)))))
 
 
 
 (defmethod ortho-view-mode ((sim sim:simulation))
+  "Run the orthographic view mode: handle input, update camera, and render frames in real time."
   (set-trace-log-level *params-log-level*)
   (let* ((os (make-instance 'ortho-state))
          (camera (ortho-initialize-camera sim os)))
