@@ -6,7 +6,8 @@
 		      :initform 0)
    (simulation-timeline :accessor simulation-timeline
 			:initarg :simulation-timeline
-			:initform '())))
+			:initform '()))
+  (:documentation "Represent a simulation, containing a timeline of states and a cursor pointing to the current one.")))
 
 
 (defmacro make-simulation (&key chain temperature gamma dt (time 0.0))
