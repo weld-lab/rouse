@@ -3,8 +3,11 @@
 
 
 (defvar *swank-thread* nil)
-(defvar *render-channel* (make-instance 'channel))
+(defvar *engine-running* nil)
 
+(defvar *developer-mode* t)
+
+(defvar *render-channel* (make-instance 'channel))
 
 
 (defmacro send-to-render-channel (&body body)
