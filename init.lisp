@@ -22,8 +22,9 @@
       (when swank::*listener-socket*
         (close swank::*listener-socket* :abort t)
         (setf swank::*listener-socket* nil))
-      (sb-thread:destroy-thread ctrl:*swank-thread*) ; not portable
+      (sb-thread:terminate-thread ctrl:*swank-thread*) ; not portable
       (setf ctrl:*swank-thread* nil)))
   (sb-ext:exit :code 0))
 
-(start-engine)
+(when (not ctrl:*developer-mode*)
+  (start-engine))
