@@ -4,6 +4,7 @@
   (:export #:make-chain
 	   #:chain
 	   #:chain-beads
+	   #:copy-chain
 	   #:total-mass
 	   #:remove-center-of-mass
 	   #:center-of-mass
