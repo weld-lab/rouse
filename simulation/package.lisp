@@ -11,7 +11,12 @@
 	   #:add-to-timeline
 
 	   #:state
-	   #:state-chain))
+	   #:state-chain
+	   #:state-temperature
+	   #:state-gamma
+	   #:state-dt
+	   #:state-time
+	   #:copy-state))
 
 
 (in-package #:rouse.simulation)

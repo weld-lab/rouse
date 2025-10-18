@@ -47,3 +47,13 @@ produce a new STATE, rather than modifying the existing one."))
 			 :state-gamma ,gamma
 			 :state-dt ,dt
 			 :state-time ,time))
+
+
+
+(defmethod copy-state ((state state))
+  "Deep copy of a state"
+  (make-state :chain (top:copy-chain (state-chain state))
+	      :temperature (state-temperature state)
+	      :gamma (state-gamma state)
+	      :dt (state-dt state)
+	      :time (state-time state)))
