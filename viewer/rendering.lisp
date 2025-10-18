@@ -1,6 +1,7 @@
 (in-package #:rouse.viewer)
 
 
+
 (defmethod render-bead ((bead top:bead) &key (color :gold) (radius 0.5))
   "Render a single bead as a colored sphere with black wireframe outlines."
   (let ((position (apply #'vec (top:get-position bead))))
