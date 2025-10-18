@@ -14,6 +14,11 @@
 				  `(make-bead ,@spec))
 				bead-specs)))))
 
+(defmethod copy-chain ((chain chain))
+  "Deep copy of a chain"
+  (make-instance 'chain
+		 :chain-beads (mapcar #'copy-bead (chain-beads chain))))
+
 
 (defmethod total-mass ((chain chain))
   (let ((total 0))
