@@ -3,47 +3,27 @@
 
 (defclass state ()
   ((state-chain :accessor state-chain
-		:initarg :state-chain
-		:documentation "The polymer chain associated with this state.
-It stores the positions of the beads and their connectivity
-(see class `chain`).")
-   
+		:initarg :state-chain)
    (state-temperature :accessor state-temperature
 		:initarg :state-temperature
-		:initform 300.0
-		:documentation "Thermal bath temperature (in Kelvin).
-Controls the amplitude of the random force in the Langevin equation,
-according to the fluctuation–dissipation theorem.")
-
+		:initform 300.0)
+   (state-k :accessor state-k
+	    :initarg :state-k)
    (state-gamma :accessor state-gamma
 		:initarg :state-gamma
-		:initform 1.0
-		:documentation "Friction coefficient (or damping constant).
-Determines the strength of the viscous drag on each bead.")
-
+		:initform 1.0)
    (state-dt :accessor state-dt
 	     :initarg :state-dt
-	     :initform 1.0d-3
-	     :documentation "Integration timestep (in seconds).
-     Used to propagate the system forward in time via the Langevin update.")
-
+	     :initform 1.0d-3)
    (state-time :accessor state-time 
 	       :initarg :state-time
-	       :initform 0.0
-	       :documentation "Current simulation time (in seconds). 
-This value is incremented after each call to the integrator (advance-state!)."))
-
-  (:documentation
-   "The STATE class represents a snapshot of the simulation at a given time.
-It encapsulates both the polymer configuration (via `chain`) and the
-environmental parameters that control its dynamics (temperature, friction, timestep).
-A STATE instance is immutable by design: evolving the system in time should
-produce a new STATE, rather than modifying the existing one."))
+	       :initform 0.0)))
 
 
-(defmacro make-state (&key chain temperature gamma dt time)
+(defmacro make-state (&key chain temperature k gamma dt time)
   `(make-instance 'state :state-chain ,chain
 			 :state-temperature ,temperature
+			 :state-k ,k
 			 :state-gamma ,gamma
 			 :state-dt ,dt
 			 :state-time ,time))
@@ -53,6 +33,7 @@ produce a new STATE, rather than modifying the existing one."))
 (defmethod copy-state ((state state))
   "Deep copy of a state"
   (make-state :chain (top:copy-chain (state-chain state))
+	      :k (state-k state)
 	      :temperature (state-temperature state)
 	      :gamma (state-gamma state)
 	      :dt (state-dt state)
