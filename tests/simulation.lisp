@@ -26,3 +26,15 @@
       (sim:add-to-timeline sim state)
       (is (= 1 (sim:simulation-cursor sim)))
       (is (= 0 (sim:forward sim))))))
+
+
+(test copy-state
+  (let* ((state (sim::make-state :chain (top:make-chain (:x 0.0))
+		       :temperature 0
+		       :gamma 0
+		       :dt 0
+		       :time 0))
+	 (copied-state (sim:copy-state state)))
+    (is (not (equal state copied-state)))
+    (is (= (sim:state-temperature state)
+	   (sim:state-temperature copied-state)))))
