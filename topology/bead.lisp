@@ -24,5 +24,17 @@
 		  :bead-vx ,vx :bead-vy ,vy :bead-vz ,vz))
 
 
+
+(defmethod copy-bead ((bead bead))
+  "Deep copy of a bead"
+  (make-bead :mass (bead-mass bead)
+	     :x (bead-x bead)
+	     :y (bead-y bead)
+	     :z (bead-z bead)
+	     :vx (bead-vx bead)
+	     :vy (bead-vy bead)
+	     :vz (bead-vz bead)))
+
+
 (defmethod get-position ((bead bead))
   (list (bead-x bead) (bead-y bead) (bead-z bead)))
