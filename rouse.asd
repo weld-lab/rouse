@@ -9,14 +9,14 @@
 	       (:module "control"
 		:components ((:file "package")
 			     (:file "control")))
-	       (:module "simulation"
-		:components ((:file "package")
-			     (:file "state")
-			     (:file "simulation")))
 	       (:module "topology"
 		:components ((:file "package")
 			     (:file "bead")
 			     (:file "chain")))
+	       (:module "simulation"
+		:components ((:file "package")
+			     (:file "state")
+			     (:file "simulation")))
 	       (:module "viewer"
 		:components ((:file "package")
 			     (:file "params")
