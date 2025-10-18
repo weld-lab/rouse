@@ -7,12 +7,13 @@
    (simulation-timeline :accessor simulation-timeline
 			:initarg :simulation-timeline
 			:initform '()))
-  (:documentation "Represent a simulation, containing a timeline of states and a cursor pointing to the current one.")))
+  (:documentation "Represent a simulation, containing a timeline of states and a cursor pointing to the current one."))
 
 
-(defmacro make-simulation (&key chain temperature gamma dt (time 0.0))
+(defmacro make-simulation (&key chain temperature k gamma dt (time 0.0))
   `(make-instance 'simulation
 		  :simulation-timeline  (list (make-state :chain ,chain
+							  :k ,k
 							  :temperature ,temperature
 							  :gamma ,gamma
 							  :dt ,dt
@@ -57,7 +58,29 @@
 
 
 (defmethod propagate ((sim simulation) &key (steps 1))
-  (error "Propagate is not yet implemented"))
+  "Advance the simulation by STEPS iterations using Euler–Maruyama.
+Each step creates a new state, appends it to the timeline,
+and removes any future states if the cursor was not at the end."
+  (dotimes (s steps)
+    ;; 1. Get current state
+    (let* ((current (current-state sim))
+           (new-state (euler-maruyama current))
+           (timeline (simulation-timeline sim))
+           (cursor (simulation-cursor sim)))
+
+      ;; 2. If we were in the middle of the timeline, delete future states
+      (when (< cursor (1- (length timeline)))
+        (setf (simulation-timeline sim)
+              (subseq timeline 0 (1+ cursor))))
+
+      ;; 3. Push new state and update cursor
+      (push new-state (simulation-timeline sim))
+      (setf (simulation-cursor sim) 0)))  ; latest state is at the front
+
+  sim)
+
+;; (defmethod propagate ((sim simulation) &key (steps 1))
+;;   (error "Propagate is not yet implemented"))
 
 (defmethod bifurcate ((sim simulation))
   (error "Bifurcate is not yet implemented"))
