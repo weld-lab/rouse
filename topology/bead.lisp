@@ -38,3 +38,13 @@
 
 (defmethod get-position ((bead bead))
   (list (bead-x bead) (bead-y bead) (bead-z bead)))
+
+
+
+(defmethod (setf get-position) (new-pos (bead bead))
+  "Set bead position (x y z) from a list of 3 numbers."
+  (destructuring-bind (x y z) new-pos
+    (setf (bead-x bead) x
+          (bead-y bead) y
+          (bead-z bead) z)
+    new-pos))
