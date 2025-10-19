@@ -1,6 +1,10 @@
 (in-package #:rouse.viewer)
 
 
+(defmethod compute-fovy ((sim sim:simulation))
+  (coerce (* *params-ortho-fovy-scaling-factor*
+	     (top:radius-of-gyration (sim:state-chain (sim:current-state sim))))
+	  'single-float))
 
 (defmethod ortho-initialize-camera ((sim sim:simulation) (os ortho-state))
   "Initialize an orthographic camera oriented according to the current face of `os`."
@@ -9,8 +13,7 @@
      :position (first face)
      :target (vec 0.0 0.0 0.0)
      :up (second face)
-     :fovy (* *params-ortho-fovy-scaling-factor*
-	      (top:radius-of-gyration (sim:state-chain (sim:current-state sim))))
+     :fovy (compute-fovy sim)
      :projection :camera-orthographic)))
 
 
@@ -20,7 +23,6 @@
   (let ((new-face (ortho-set-face os i)))
     (setf (camera3d-position camera) (first new-face))
     (setf (camera3d-up camera) (second new-face))))
-
 
 
 (defmethod ortho-input ((sim sim:simulation) (os ortho-state)
@@ -53,7 +55,10 @@
     (sim:forward sim))
 
   (when (is-key-pressed :key-left)
-    (sim:backward sim)))
+    (sim:backward sim))
+
+  (when (is-key-pressed :key-p)
+    (sim:propagate sim)))
 
 
 
@@ -64,6 +69,7 @@
          (chain (top:remove-center-of-mass (sim:state-chain state))))
     (with-drawing
       (clear-background :black)
+      (setf (slot-value camera 'cl-raylib::fovy) (compute-fovy sim))
       (render-hud sim os camera)
       (with-mode-3d (camera)
         (render-chain chain)))))

@@ -9,6 +9,17 @@
     (draw-sphere-wires position radius 5 10 :black)))
 
 
+;; (defmethod render-bead ((bead top:bead) &key (color :gold) (radius 0.5))
+;;   "Render a bead safely with single-float coordinates."
+;;   (multiple-value-bind (x y z)
+;;       (values (coerce (top::bead-x bead) 'single-float)
+;;               (coerce (top::bead-y bead) 'single-float)
+;;               (coerce (top::bead-z bead) 'single-float))
+;;     (print (top:get-position bead))
+;;     (let ((position (vec x y z)))
+;;       (draw-sphere position radius color)
+;;       (draw-sphere-wires position radius 5 10 :blue))))
+
 
 (defmethod render-chain ((chain top:chain)
 			 &key (bond-color :blue)
