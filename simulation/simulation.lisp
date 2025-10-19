@@ -57,30 +57,27 @@
   (backward sim))
 
 
+
 (defmethod propagate ((sim simulation) &key (steps 1))
-  "Advance the simulation by STEPS iterations using Euler–Maruyama.
-Each step creates a new state, appends it to the timeline,
-and removes any future states if the cursor was not at the end."
+  "Advance the simulation by STEPS Euler–Maruyama steps.
+If the cursor points into the past (cursor > 0), truncate newer
+states (branch), then append each new state at the head and set
+cursor to 0 (newest)."
   (dotimes (s steps)
-    ;; 1. Get current state
-    (let* ((current (current-state sim))
-           (new-state (euler-maruyama current))
-           (timeline (simulation-timeline sim))
-           (cursor (simulation-cursor sim)))
-
-      ;; 2. If we were in the middle of the timeline, delete future states
-      (when (< cursor (1- (length timeline)))
+    (let* ((timeline (simulation-timeline sim))
+           (cursor (simulation-cursor sim))
+           (n (length timeline)))
+      (when (> cursor 0)
         (setf (simulation-timeline sim)
-              (subseq timeline 0 (1+ cursor))))
-
-      ;; 3. Push new state and update cursor
-      (push new-state (simulation-timeline sim))
-      (setf (simulation-cursor sim) 0)))  ; latest state is at the front
-
+              (subseq timeline cursor n))
+        (setf (simulation-cursor sim) 0)
+        (setf timeline (simulation-timeline sim)))
+      (let* ((current (current-state sim))
+             (new-state (euler-maruyama current)))
+        (push new-state (simulation-timeline sim))
+        (setf (simulation-cursor sim) 0))))
   sim)
 
-;; (defmethod propagate ((sim simulation) &key (steps 1))
-;;   (error "Propagate is not yet implemented"))
 
 (defmethod bifurcate ((sim simulation))
   (error "Bifurcate is not yet implemented"))
