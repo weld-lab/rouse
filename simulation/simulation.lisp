@@ -58,11 +58,10 @@
 
 
 
-(defmethod propagate ((sim simulation) &key (steps 1))
-  "Advance the simulation by STEPS Euler–Maruyama steps.
-If the cursor points into the past (cursor > 0), truncate newer
-states (branch), then append each new state at the head and set
-cursor to 0 (newest)."
+(defmethod propagate ((sim simulation) &key (steps 1) (save-every 1))
+  "Integrate the system for STEPS iterations using Euler–Maruyama.
+Intermediate states are saved every SAVE-EVERY steps; the final state is always saved.
+If the cursor is in the past, future states are truncated before propagation."
   (dotimes (s steps)
     (let* ((timeline (simulation-timeline sim))
            (cursor (simulation-cursor sim))
@@ -74,8 +73,10 @@ cursor to 0 (newest)."
         (setf timeline (simulation-timeline sim)))
       (let* ((current (current-state sim))
              (new-state (euler-maruyama current)))
-        (push new-state (simulation-timeline sim))
-        (setf (simulation-cursor sim) 0))))
+	(when (or  (zerop (mod s save-every))
+		   (= s (1- steps)))
+          (push new-state (simulation-timeline sim))
+          (setf (simulation-cursor sim) 0)))))
   sim)
 
 

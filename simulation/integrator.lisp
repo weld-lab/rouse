@@ -58,7 +58,7 @@ using the Box–Muller transform (mean 0, std 1)"
          (beads (top:chain-beads chain))
          (dt (state-dt state))
          (gamma (state-gamma state))
-         (kB 1.380649d-23) ; changer
+         (kB 1.380649d-23)
          (temperature (state-temperature state))
          (sigma (sqrt (* 2 kB temperature dt (/ 1.0 gamma)))))  ;; √(2kTΔt/γ)
     
