@@ -11,7 +11,9 @@
 
 (defparameter *params-log-level* :log-trace)
 (defparameter *params-target-fps* 60)
-(defparameter *params-ortho-fovy-scaling-factor* 4)
+
+(defparameter *params-scaling-position* 3d9)
+(defparameter *params-input-user-scaling* 1)
 
 (defparameter *params-ortho-distance* 130.0)
 (defparameter *params-ortho-faces*

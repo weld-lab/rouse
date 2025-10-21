@@ -2,12 +2,13 @@
 
 
 (defmethod compute-fovy ((sim sim:simulation))
-  (coerce (* *params-ortho-fovy-scaling-factor*
+  (coerce (* *params-scaling-position*
+	     *params-input-user-scaling*
 	     (top:radius-of-gyration (sim:state-chain (sim:current-state sim))))
 	  'single-float))
 
 (defmethod ortho-initialize-camera ((sim sim:simulation) (os ortho-state))
-  "Initialize an orthographic camera oriented according to the current face of `os`."
+  "Initialize an orthographic camera oriented according to the current face of `os`"
   (let ((face (ortho-get-face os)))
     (make-camera3d
      :position (first face)
@@ -19,7 +20,7 @@
 
 
 (defmethod ortho-set-camera-face ((os ortho-state) camera i)
-  "Set the camera orientation to the i-th orthographic face."
+  "Set the camera orientation to the i-th orthographic face"
   (let ((new-face (ortho-set-face os i)))
     (setf (camera3d-position camera) (first new-face))
     (setf (camera3d-up camera) (second new-face))))
@@ -27,7 +28,7 @@
 
 (defmethod ortho-input ((sim sim:simulation) (os ortho-state)
 			camera)
-  "Handle keyboard input for camera control and time navigation in orthographic view."
+  "Handle keyboard input for camera control and time navigation in orthographic view"
   (when (is-key-pressed :key-space)
     (let ((new-face (ortho-go-next-face os)))
       (setf (camera3d-position camera) (first new-face))
@@ -56,6 +57,14 @@
 
   (when (is-key-pressed :key-left)
     (sim:backward sim))
+
+  (when (is-key-pressed :key-up)
+    (incf *params-input-user-scaling*))
+
+  (when (is-key-pressed :key-down)
+    (decf *params-input-user-scaling*)
+    (when (< *params-input-user-scaling* 1)
+      (setf *params-input-user-scaling* 1)))
 
   (when (is-key-pressed :key-p)
     (sim:propagate sim)))
