@@ -18,7 +18,9 @@
 	   #:state-k
 	   #:state-dt
 	   #:state-time
-	   #:copy-state))
+	   #:copy-state
+
+	   #:export-simulation))
 
 
 (in-package #:rouse.simulation)

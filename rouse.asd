@@ -17,7 +17,8 @@
 		:components ((:file "package")
 			     (:file "state")
 			     (:file "simulation")
-			     (:file "integrator")))
+			     (:file "integrator")
+			     (:file "export")))
 	       (:module "viewer"
 		:components ((:file "package")
 			     (:file "params")
