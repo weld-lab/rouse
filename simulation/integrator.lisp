@@ -2,12 +2,13 @@
 
 
 (defun random-float (&key (precision 100))
-  "Return a uniform random float in [0, 1)."
+  "Return a uniform random float in [0, 1)"
   (/ (random precision (make-random-state (not ctrl:*developer-mode*))) precision))
 
 
 (defun box-muller ()
-  "Return a normally distributed random number using the Box–Muller transform (mean 0, std 1)."
+  "Return a normally distributed random number
+using the Box–Muller transform (mean 0, std 1)"
   (let* ((u1 (max (random-float) 1e-10))
          (u2 (random-float))
          (r (sqrt (* -2.0 (log u1))))
@@ -50,15 +51,14 @@
               (* -1 k (- (* 2 yi) yprev ynext))
               (* -1 k (- (* 2 zi) zprev znext))))))
 
-(defmethod euler-maruyama ((state state) &key (steps 1))
-  "Propagate one Euler–Maruyama step for the Rouse model.
-Integrates Langevin dynamics: dr = (F/gamma)*dt + sqrt(2*kB*T*dt/gamma)*N(0,1)."
+(defmethod euler-maruyama ((state state))
+  "Propagate one Euler–Maruyama step for the Rouse model"
   (let* ((new-state (copy-state state))
          (chain (state-chain new-state))
          (beads (top:chain-beads chain))
          (dt (state-dt state))
          (gamma (state-gamma state))
-         (kB 1.0) ; à changer
+         (kB 1.380649d-23) ; changer
          (temperature (state-temperature state))
          (sigma (sqrt (* 2 kB temperature dt (/ 1.0 gamma)))))  ;; √(2kTΔt/γ)
     
