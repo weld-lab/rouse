@@ -57,28 +57,28 @@
   (backward sim))
 
 
-
 (defmethod propagate ((sim simulation) &key (steps 1) (save-every 1))
-  "Integrate the system for STEPS iterations using Euler–Maruyama.
-Intermediate states are saved every SAVE-EVERY steps; the final state is always saved.
-If the cursor is in the past, future states are truncated before propagation."
-  (dotimes (s steps)
-    (let* ((timeline (simulation-timeline sim))
-           (cursor (simulation-cursor sim))
-           (n (length timeline)))
+  "Advance the simulation by :STEPS Euler–Maruyama steps.
+If the cursor is in the past, truncate future states.
+Save a new state every :SAVE-EVERY steps, and always save the final one."
+  ;; start from the current state
+  (let ((current (current-state sim)))
+    ;; remove future if cursor not at end
+    (let ((cursor (simulation-cursor sim))
+          (n (length (simulation-timeline sim))))
       (when (> cursor 0)
         (setf (simulation-timeline sim)
-              (subseq timeline cursor n))
-        (setf (simulation-cursor sim) 0)
-        (setf timeline (simulation-timeline sim)))
-      (let* ((current (current-state sim))
-             (new-state (euler-maruyama current)))
-	(when (or  (zerop (mod s save-every))
-		   (= s (1- steps)))
-          (push new-state (simulation-timeline sim))
-          (setf (simulation-cursor sim) 0)))))
+              (subseq (simulation-timeline sim) cursor n))
+        (setf (simulation-cursor sim) 0)))
+    ;; integrate
+    (dotimes (s steps)
+      (setf current (euler-maruyama current)) 
+      (when (or (zerop (mod s save-every))
+                (= s (1- steps)))
+        (format t "Computed step: ~a / ~a~%" (1+ s) steps)
+        (push current (simulation-timeline sim))
+        (setf (simulation-cursor sim) 0))))
   sim)
-
 
 (defmethod bifurcate ((sim simulation))
   (error "Bifurcate is not yet implemented"))
