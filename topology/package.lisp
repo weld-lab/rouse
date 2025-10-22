@@ -11,6 +11,7 @@
 	   #:radius-of-gyration
 	   
 	   #:bead
-	   #:get-position))
+	   #:get-position
+	   #:bead-mass))
 
 (in-package #:rouse.topology)
