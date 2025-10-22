@@ -7,7 +7,16 @@
 		(:x 0.0 :y 0.0 :z 0.0)
 		(:x 0.0 :y 1.0 :z 0.0 :vx 1.0))))
     (is (= (length (top::chain-beads chain))
-	   2))))
+	   2)))
+  (let* ((chain
+	   (top:make-linear-chain 3 :mass 3.0 :spaced-by 1.0 :along :x))
+         (beads (top:chain-beads chain)))
+    (is (= (length beads) 3))
+    (is (equalp (mapcar #'top:get-position beads)
+	       '((1.0 0.0 0.0)
+                 (0.0 0.0 0.0)
+                 (-1.0 0.0 0.0))))
+    (is (every (lambda (b) (= (top:bead-mass b) 3.0)) beads))))
 
 (test copy-bead-and-chain
   (let* ((bead (top::make-bead :x 0.0))

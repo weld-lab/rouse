@@ -2,6 +2,7 @@
   (:nicknames #:top #:topology)
   (:use #:cl)
   (:export #:make-chain
+	   #:make-linear-chain
 	   #:chain
 	   #:chain-beads
 	   #:copy-chain

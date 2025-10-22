@@ -14,6 +14,21 @@
 				  `(make-bead ,@spec))
 				bead-specs)))))
 
+
+(defmacro make-linear-chain (N &key (spaced-by 1d-9) (along :x) (mass 1.0))
+  "Create a linear chain of N beads evenly spaced by :SPACED-BY 
+along :ALONG (:x, :y or :z), each having mass :MASS"
+  (let* ((half (/ (1- N) 2.0d0))
+         (indices (loop for i from 0 below N collect (- i half)))
+         (coord-key (ecase along
+                      (:x :x)
+                      (:y :y)
+                      (:z :z)))
+         (specs (loop for idx in indices
+                      for pos = (* idx spaced-by)
+                      collect `(:mass ,mass ,coord-key ,pos))))
+    `(top:make-chain ,@specs)))
+
 (defmethod copy-chain ((chain chain))
   "Deep copy of a chain"
   (make-instance 'chain
