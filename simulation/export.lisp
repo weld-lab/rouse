@@ -20,8 +20,8 @@
             do (loop for i from 0
                      for bead in (top:chain-beads (state-chain state))
                      do (destructuring-bind (x y z) (top:get-position bead)
-			  (format pos "~f ~f ~d ~f ~f ~f~%"
-				  current-time (top:bead-mass bead) i x y z)))))
+			  (format pos "~e ~d ~e ~e ~e ~e~%"
+				  current-time i (top:bead-mass bead) x y z)))))
 
     ;; save parameters
     (with-open-file (st states-file

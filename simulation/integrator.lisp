@@ -1,9 +1,11 @@
 (in-package #:rouse.simulation)
 
 
+(defparameter *rng* (make-random-state (not ctrl:*developer-mode*)))
+
 (defun random-float (&key (precision 100))
   "Return a uniform random float in [0, 1)"
-  (/ (random precision (make-random-state (not ctrl:*developer-mode*))) precision))
+  (/ (random precision *rng*) precision))
 
 
 (defun box-muller ()
@@ -51,32 +53,65 @@ using the Box–Muller transform (mean 0, std 1)"
               (* -1 k (- (* 2 yi) yprev ynext))
               (* -1 k (- (* 2 zi) zprev znext))))))
 
+;; (defmethod euler-maruyama ((state state))
+;;   "Propagate one Euler–Maruyama step for the Rouse model"
+;;   (let* ((new-state (copy-state state))
+;;          (chain (state-chain new-state))
+;;          (beads (top:chain-beads chain))
+;;          (dt (state-dt state))
+;;          (gamma (state-gamma state))
+;;          (kB 1.380649d-23)
+;;          (temperature (state-temperature state))
+;;          (sigma (sqrt (* 2 kB temperature dt (/ 1.0 gamma)))))  ;; √(2kTΔt/γ)
+    
+;;     (loop for i from 0 below (length beads)
+;;           for bead = (nth i beads)
+;;           do
+;;              (multiple-value-bind (fx fy fz) (interaction new-state i)
+;;                (destructuring-bind (x y z) (top:get-position bead)
+;;                  (let ((dx (+ (* dt (/ fx gamma))
+;;                               (* sigma (box-muller))))
+;;                        (dy (+ (* dt (/ fy gamma))
+;;                               (* sigma (box-muller))))
+;;                        (dz (+ (* dt (/ fz gamma))
+;;                               (* sigma (box-muller)))))
+;;                    (setf (top:get-position bead)
+;;                          (list (+ x dx)
+;;                                (+ y dy)
+;;                                (+ z dz)))))))
+    
+;;     (incf (state-time new-state) dt)
+;;     new-state))
+
+
+
 (defmethod euler-maruyama ((state state))
-  "Propagate one Euler–Maruyama step for the Rouse model"
-  (let* ((new-state (copy-state state))
-         (chain (state-chain new-state))
-         (beads (top:chain-beads chain))
-         (dt (state-dt state))
+  "One Euler–Maruyama step. Forces are evaluated on the *old* state,
+   updates are written to a fresh copy (new-state)."
+  (let* ((old-state state)
+         (new-state (copy-state state))
+         (old-beads (top:chain-beads (state-chain old-state)))
+         (new-beads (top:chain-beads (state-chain new-state)))
+         (dt    (state-dt state))
          (gamma (state-gamma state))
-         (kB 1.380649d-23)
-         (temperature (state-temperature state))
-         (sigma (sqrt (* 2 kB temperature dt (/ 1.0 gamma)))))  ;; √(2kTΔt/γ)
-    
-    (loop for i from 0 below (length beads)
-          for bead = (nth i beads)
+         (kB    1.380649d-23)
+         (temperature     (state-temperature state))
+         ;; √(2 k_B T Δt / γ)
+         (sigma (sqrt (* 2d0 kB temperature dt (/ 1d0 gamma)))))
+
+    (loop for i from 0 below (length old-beads)
+          for old = (nth i old-beads)
+          for new = (nth i new-beads)
           do
-             (multiple-value-bind (fx fy fz) (interaction new-state i)
-               (destructuring-bind (x y z) (top:get-position bead)
-                 (let ((dx (+ (* dt (/ fx gamma))
-                              (* sigma (box-muller))))
-                       (dy (+ (* dt (/ fy gamma))
-                              (* sigma (box-muller))))
-                       (dz (+ (* dt (/ fz gamma))
-                              (* sigma (box-muller)))))
-                   (setf (top:get-position bead)
-                         (list (+ x dx)
-                               (+ y dy)
-                               (+ z dz)))))))
-    
+            (multiple-value-bind (fx fy fz) (interaction old-state i)
+	      (destructuring-bind (x y z) (top:get-position old)
+		(let ((dx (+ (* dt (/ fx gamma)) (* sigma (box-muller))))
+                      (dy (+ (* dt (/ fy gamma)) (* sigma (box-muller))))
+                      (dz (+ (* dt (/ fz gamma)) (* sigma (box-muller)))))
+                  ;; write into NEW bead
+                  (setf (top::bead-x new) (+ x dx)
+			(top::bead-y new) (+ y dy)
+			(top::bead-z new) (+ z dz))))))
+
     (incf (state-time new-state) dt)
     new-state))
