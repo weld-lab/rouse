@@ -182,13 +182,22 @@ def rouse_modes(pos, pmax=None):
     # p >= 1
     for p in range(1, pmax+1):
         w = np.cos(np.pi * p * n / N)  # (N,1)
-        R[p] = (pos * w[:, :, None]).sum(axis=0) / N
+        R[p] = (2 / N) * (pos * w[:, :, None]).sum(axis=0)
     return R  # shape: (pmax+1, T, 3)
 
 def compute_autocorr_mode(Rp):
     """Return autocorrelation of one Rouse mode Xp(t) (shape: [T,3])."""
+    print("WARNING : compute autocorr mode wrong")
     Rp = Rp - Rp.mean(axis=0)          # remove mean
     norm = (Rp**2).sum(axis=1)         # |Rp|²
     corr = np.correlate(norm, norm, mode='full')
     corr = corr[corr.size//2:]
     return corr / corr[0]
+
+def autocorr_dot(X):
+    N = len(X)
+    C = np.zeros(N)
+    for k in range(N):
+        dots = np.sum(np.sum(X[k:] * X[:N-k], axis=1))
+        C[k] = dots / (N - k)
+    return C / C[0]  # normalisé
