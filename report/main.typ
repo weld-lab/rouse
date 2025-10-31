@@ -29,7 +29,7 @@
 
 // FILE DESC
 #set document(
-     title:"TO FILL",
+     title:"The Quiet Dance of Brownian Chains --- An Étude in common lisp",
      author:"Erwan Le Doeuff (weld)",
      date: datetime(year:2025, month:10, day:24)
 )
@@ -58,23 +58,14 @@
   radius: 3pt,
 )
 
-//#text(17pt)[*Abstract*]
-//To write.
-
-#text(17pt)[*Plan*]
-
-- Appendices
-    - Installer common lisp (portacle) et le projet
-    - Faire une video demonstrative (supplementaire)
-    - Commentaire du code, github
-
+#outline()
 
 #pagebreak()
-#set page(columns:1, header:[`insert here`])
+#set page(columns:1, header:[_The Quiet Dance of Brownian Chains_])
 
 = Introduction
 
-The mesoscale is, perhaps, one of the most difficult frontiers in physics. At least, conceptually it is for me. It lies in that ambiguous territory where neither the mathematical clarity of microscopic laws nor the comforting simplicity of macroscopic approximations can be fully trusted. It is a domain of negotiation, where intuition must constantly be rebuilt, and where the language of isolated equations gives way to that of collective behaviour.
+The mesoscopic scale is, perhaps, one of the most difficult frontiers in physics. At least, conceptually it is for me. It lies in that ambiguous territory where neither the mathematical clarity of microscopic laws or the comforting simplicity of macroscopic approximations can be fully trusted. It is a domain of negotiation, where intuition must constantly be rebuilt, and where the language of isolated equations gives way to that of collective behaviour.
 
 On the microscopic side, mathematics often retains its authority. The systems are small enough, the variables are explicit and --- at least in principle --- the governing equations can be written down exactly. Quantum mechanics stands as the clearest example of this triumph: an austere yet complete framework capable of capturing atoms, molecules and the very first signs of disorder, provided one accepts the mental gymnastics it demands.
 
@@ -89,17 +80,17 @@ The work presented here follows the same lineage. We will begin with a chain in 
 
 The formalism itself dates back to the work of Paul E. Rouse, who first proposed a simple yet powerful model for the dynamics of polymer chains. The role of the computer in this story is 3--fold: to generate the noise that drives the dynamics, to integrate the resulting equations of motion and finally to offer us the chance to observe, to interpret and perhaps to glimpse a bit of order within the fluctuations.
 
-For this, I chose to work in Common Lisp. That is a language whose core is as old as the Rouse model itself, and one that encourages the same kind of dialogue between abstraction and concreteness. It feels appropriate that model born from simplicity should be explored through a language built for expressing ideas. The rest of this report is an attempt to retrace that journey --- from equations to motion, from noise to structure.
+For this, I chose to work in Common Lisp. That is a language whose core is as old as the Rouse model itself, and one that encourages the same kind of dialogue between abstraction and concreteness. It feels appropriate that model born of simplicity should be explored through a language built for expressing ideas. The rest of this report is an attempt to retrace that journey --- from equations to motion, from noise to structure.
 
 = Theoretical aspects
 
-The goal here is not to recount the entiry history of Brownian theory, but to offer a few insights into it. Bertrand Duplantier gives a far more exhaustive and elegant account in his _Séminaire Poincaré_ lecture (2005) @duplantier_mouvement_2005  --- one can only recommend reading the transcript.
+The goal here is not to recount the entire history of Brownian theory, but to offer a few insights into it. Bertrand Duplantier gives a far more exhaustive and elegant account in his _Séminaire Poincaré_ lecture (2005) @duplantier_mouvement_2005  --- one can only recommend reading the transcript.
 
 It all began, quite innocently, in 1827 when the botanist Robert Brown observed that pollen grains suspended in water exhibited an erratic and never-ending motion. The phenomenon was puzzling: it persisted even when the grains were no longer alive, ruling out any biological cause. Its physical origin would remain debated for nearly a century.
 
 In 1905, Albert Einstein @einstein_investigations_nodate proposed a quantitative explanation. He showed that this irregular motion could be understood as the visible consequence of molecular collisions. Instead of following the particle itself, he described the probability of finding it at a certain position in time, using the diffusion equation.
 
-A few months later, the physicist Marian Smoluchowski @smoluchowski_sur_1924 offered an alternative viewpoint. Where Einstein's approach was statistical, Smoluchowski's was kinetic and mechanical. He pictured the suspended particle as being constantly bombard by the molecules of the fluid, each collision imparting a tiny impulse. From this more intuitive picture, he recovered the same diffusion law, but with an emphasis on the discrete nature of the random kicks.
+A few months later, the physicist Marian Smoluchowski @smoluchowski_sur_1924 offered an alternative viewpoint. Where Einstein's approach was statistical, Smoluchowski's was kinetic and mechanical. He pictured the suspended particle as being constantly bombarded by the molecules of the fluid, each collision imparting a tiny impulse. From this more intuitive picture, he recovered the same diffusion law, but with an emphasis on the discrete nature of the random kicks.
 
 Finally, in 1908, Paul Langevin @langevin_sur_1908 brought synthesis and clarity. He wrote down directly the equation of motion for a Brownian particle --- developed in the next section.
 
@@ -145,12 +136,12 @@ $
     angle.l xi_alpha (t) xi_beta (t') angle.r = 2 gamma k_B T dot delta_(alpha beta)  dot delta(t - t')
 $<eq:prop2_xi>
 
-where greek letters denote coordinates of $bold(xi)$ and where $k_B$ is the Boltzmann constant and $T$ the temperature. With these properties, $bold(xi)$ is known as a Gaussian white noise. These considerations are modern#footnote[I would like to apologize for the lack of derivation here. I am familiar with the derivation of @eq:prop2_xi using the integrating factor --- I simply chose not to include it. None of the demonstrations I have come across seem to _physically_ justify the path they take, and perhaps out of a lack of technical skill on my part, it feels to me more like a matter of mathematics than of physical intuition. To the reader, sorry, again.] --- Langevin himself had no knowledge of them. For instance, the appearance of the $delta(t-t')$ implicitly enforces what we now call the Markov property: the random force acting on the particles at a given instant $t$ is independent of the forces that acted in the past, and likewise uncorrelated with those that will act in the future. Moreover, the mathematical nature of this noise, while perfectly acceptable from a physicist's point of view, deserves a closer look. We will return to this question when discussing the numerical resolution of the Langevin equation.
+where Greek letters denote coordinates of $bold(xi)$ and where $k_B$ is the Boltzmann constant and $T$ the temperature. With these properties, $bold(xi)$ is known as a Gaussian white noise. These considerations are modern#footnote[I would like to apologize for the lack of derivation here. I am familiar with the derivation of @eq:prop2_xi using the integrating factor --- I simply chose not to include it. None of the demonstrations I have come across seem to _physically_ justify the path they take, and perhaps out of a lack of technical skill on my part, it feels to me more like a matter of mathematics than of physical intuition. To the reader, sorry, again.] --- Langevin himself had no knowledge of them. For instance, the appearance of the $delta(t-t')$ implicitly enforces what we now call the Markov property: the random force acting on the particles at a given instant $t$ is independent of the forces that acted in the past, and likewise uncorrelated with those that will act in the future. Moreover, the mathematical nature of this noise, while perfectly acceptable from a physicist's point of view, deserves a closer look. We will return to this question when discussing the numerical resolution of the Langevin equation.
 
 
 == Rouse model<section:rouse>
 
-To move on to the Rouse model, we must now consider a collection of $N$ identical particles, called beads, whose dynamics each follow the @eq:langevin of Langevin. This time, however, we introduce an additional coupling term --- a harmonic interaction $U$ that links neighboring particles together. Thus, for the $i$th particule, the equation of motion takes the general form,
+To move on to the Rouse model, we must now consider a collection of $N$ identical particles, called beads, whose dynamics each follow the @eq:langevin of Langevin. This time, however, we introduce an additional coupling term --- a harmonic interaction $U$ that links neighboring particles together. Thus, for the $i$th particle, the equation of motion takes the general form,
 
 $
     m partial_t bold(v)_i = - bold(nabla)_bold(x)_i U - gamma bold(v)_i + bold(xi)_i
@@ -185,7 +176,7 @@ $
     bold(X)_p (t) = 1/N sum_(i=0)^(N-1) bold(x)_i (t) cos[(p pi)/N (i + 1/2)]
 $<eq:mode_rouse>
 
-Each of these modes describes a collective motion of the chain, analogous to the normal modes of a vibrating string, but damped and driven by noise. The lowest modes (small $p$) govern the large-scale motions of the chain, while higher modes describe faster, local fluctuations. The mode $0$ corresponds to the diffusion of the center of mass,
+Each of these modes describes a collective motion of the chain, analogous to the normal modes of a vibrating string, damped and driven by noise. The lowest modes (small $p$) govern the large-scale motions of the chain, while higher modes describe faster, local fluctuations. The mode $0$ corresponds to the diffusion of the center of mass,
 
 $
     bold(X)_0 (t) = 1/N sum_(i=0)^(N-1) bold(x)_i (t)
@@ -357,7 +348,7 @@ $
     dif bold(x) = - 1/gamma bold(nabla) U dif t + sqrt((2 k_B T)/gamma ) dif bold(W)_t
 $
 
-The term $dif bold(W)_t$ expresses a small increment in the Wiener process. To implement this Wiener process numerically, one can simply draw a random number $eta_alpha$ from a standard normale distribution $cal(N) (0,1)$, and write that the Wiener increment is given by $dif W_t_alpha = a eta_alpha$ with $a$ a proportionality constant. We can check that this construction satisfies the expected statistical properties.
+The term $dif bold(W)_t$ expresses a small increment in the Wiener process. To implement this Wiener process numerically, one can simply draw a random number $eta_alpha$ from a standard normal distribution $cal(N) (0,1)$, and write that the Wiener increment is given by $dif W_t_alpha = a eta_alpha$ with $a$ a proportionality constant. We can check that this construction satisfies the expected statistical properties.
 
 For the mean, the result is immediate, since $angle.l eta_alpha angle.r = 0$, hence $angle.l dif W_t_alpha angle.r = 0$. For the mean-squared displacement, one has,
 
@@ -390,11 +381,11 @@ When one starts implementing a molecular dynamics engine, the first practical qu
 
 But to me, a molecular dynamics engine should be seen as a tool for _in silico_ experimentation. Let us recall what we truly do: we integrate equations derived from models, and we test what our assumptions imply. What we need, then, are tools suited to the pace of theoretical reasoning, _i.e._ to the act of erasing, rewriting and simplifying as one does on a blackboard.
 
-This project was born precisely from that absence: a lack of flexibility, of agility, of an environment that feels alive. Common Lisp, with its symbolic nature and living runtime, offered exactly that. It allows a style of development that is both exploratory and precise, where one can expression physical ideas directly in code and see them evolve interactively.
+This project was born precisely from that absence: a lack of flexibility, of agility, of an environment that feels alive. Common Lisp, with its symbolic nature and living runtime, offered exactly that. It allows a style of development that is both exploratory and precise, where one can express physical ideas directly in code and see them evolve interactively.
 
-From this starting point, the implementation was designed to remain modular and transparent. Each main components could be tested or replaced independantly. The codebase is divided into six main packages: topology, control, test, viewer, simulation & scripts. Each component is relatively independent and could we rewritten or extended without difficulty --- a design choice meant to favor modularity and long-term maintainability. Let us briefly walk through some of them,
+From this starting point, the implementation was designed to remain modular and transparent. Each main component could be tested or replaced independently. The codebase is divided into six main packages: topology, control, test, viewer, simulation & scripts. Each component is relatively independent and could be rewritten or extended without difficulty --- a design choice meant to favor modularity and long-term maintainability. Let us briefly walk through some of them,
 
-- The *topology* module is in charge of building the chain. It relies on two simple classes: `chain`, which contains a list of beads, and `bead` which holds the physical information of each brownian particle --- its position, mass and possibly velocity. Around these structures live a few methods to access positions, extract properties or compute derived quantities (center of mass, radius of gyration, ...). But perhaps more importantly, a small set of macros lets us write concise and expressive topology definitions. For instance, the following expression, ```lisp
+- The *topology* module is in charge of building the chain. It relies on two simple classes: `chain`, which contains a list of beads, and `bead` which holds the physical information of each Brownian particle --- its position, mass and possibly velocity. Around these structures live a few methods to access positions, extract properties or compute derived quantities (center of mass, radius of gyration, ...). But perhaps more importantly, a small set of macros lets us write concise and expressive topology definitions. For instance, the following expression, ```lisp
 (top:make-linear-chain 20 :along :y :spaced-by 1d-9)
 ``` will generate a chain of 20 beads, aligned along the y--axis, with a spacing of 1nm between each bead at time zero.
 
@@ -416,14 +407,14 @@ From this starting point, the implementation was designed to remain modular and 
             (sim:export-simulation *sim* (format nil "~a" temperature))
             (sim:backward *sim* :steps 1000)))
 ``` I challenge the reader to do it with such ease in GROMACS.
-- Finally, the *viewer* module follows the same philosophy, allowing one to visualize the simulation as it is being shaped by thought. Its implementation remains minimal. Due to time contraints, only a single view has been developed so far: the so-called `ortho-view`, illustrated in @fig:viewer. This view displays the motion of the chain projected along the cartesian axes ($plus.minus X, plus.minus Y, plus.minus Z)$, while removing the diffusion of the center of mass so that one can focus purely on the internal dynamics. It also provides a few convient interactions; for instance, the $arrow.l$ and $arrow.r$ keys allow one to navigate backward and forward in time through the timeline. To launch it, ```lisp
+- Finally, the *viewer* module follows the same philosophy, allowing one to visualize the simulation as it is being shaped by thought. Its implementation remains minimal. Due to time constraints, only a single view has been developed so far: the so-called `ortho-view`, illustrated in @fig:viewer. This view displays the motion of the chain projected along the cartesian axes ($plus.minus X, plus.minus Y, plus.minus Z)$, while removing the diffusion of the center of mass so that one can focus purely on the internal dynamics. It also provides a few convient interactions; for instance, the $arrow.l$ and $arrow.r$ keys allow one to navigate backward and forward in time through the timeline. To launch it, ```lisp
 (view:view *sim* :mode :ortho-view)
 ```
 
 
 Most of these functions have been verified through integration tests, but more importantly through unit testing. While the code coverage is not exhaustive, the tests target the most critical components of the system and ensure that each module behaves as intended.
 
-A final note about Common Lisp: although born in the 1980s and only slighty updated since, its ecosystem for numerical computation remains surprisingly limited. For instance, implementing the Euler-Maruyama scheme requires drawing samples from a normal distribution, yet Common Lisp --- to the best of my knowledge --- provides no native generator for $cal(N)(0,1)$. I therefore reimplemented the Box-Muller transform myself.
+A final note about Common Lisp: although born in the 1980s and only slightly updated since, its ecosystem for numerical computation remains surprisingly limited. For instance, implementing the Euler-Maruyama scheme requires drawing samples from a normal distribution, yet Common Lisp --- to the best of my knowledge --- provides no native generator for $cal(N)(0,1)$. I therefore reimplemented the Box-Muller transform myself.
 
 #figure(
     image("rsrc/illu-viewer.png", width: 60%),
@@ -504,7 +495,7 @@ What we observe is consistent with the literature: at short times, a brief diffu
         (*Right*)  Mean-squared displacement of some beads (3rd, 8th and 15th) as a function of time lags.\ All beads exhibit a short-time diffusive regime followed by a subdiffusive one, with end beads showing slightly larger amplitudes due to reduced connectivity.]
 )<fig:test-r2>
 
-To isolate discretization effects, we reran the simulations with the same random seed but a time step ten times larger. The MSD of the center of mass and of single beads retained the same type of slopes and fitted diffusion constant remained within statistical uncertainty. This indicates that, in our parameter range, the implementation of the Euler-Maruyama scheme is not introducing a systematic bias, provided that the chosen $Delta t$ remains coherent with overdamped timescales.
+To isolate discretization effects, we reran the simulations with the same random seed but a time step ten times larger. The MSD of the center of mass and of single beads retained the same type of slopes and fitted diffusion constant remained within statistical uncertainty. This indicates that, in our parameter range, the implementation of the Euler-Maruyama scheme is not introducing a systematic bias, provided that the chosen $Delta t$ remains consistent with overdamped timescales.
 
 #figure(
     image("rsrc/test-rg2.png", width: 60%),
@@ -516,13 +507,13 @@ Finally, we verified that the structural properties of the chain were also corre
 
 = Results & Physical discussion
 
-Perhaps, at first glance, the reader might find this model somewhat toy-like. Yet, it is worth insisting on what it truly represents. As mentioned earlier, the Rouse model is nothing more than the coupling of Brownian particles, which, on paper, translates into the study of the evolution of a linear structure freely moving in a solvent.
+Perhaps, at first glance, the reader might find this model somewhat toy-like. Yet, it is worth insisting on what it truly represents. As mentioned earlier, the Rouse model is nothing more than the coupling of Brownian particles, which, on paper, translate into the study of the evolution of a linear structure freely moving in a solvent.
 
-Such structures are ubiquitous. They form the very basis of polymer physics --- and, more importantly, of biological polymers. They are your proteins. They are your membrane receptors for drugs. They are your DNA and RNA. Taken together, they assemble into larger complexes --- your enzymes. What the Rouse model ultimately proposes it not merely a toy picture of coupled beads, but rather an effective coarse-graining of the flexible chains that make up life itself.
+Such structures are ubiquitous. They form the very basis of polymer physics --- and, more importantly, of biological polymers. They are your proteins. They are your membrane receptors for drugs. They are your DNA and RNA. Taken together, they assemble into larger complexes --- your enzymes. What the Rouse model ultimately proposes it is not merely a toy picture of coupled beads, but rather an effective coarse-graining of the flexible chains that make up life itself.
 
 This kind of coarse-graining is standard in molecular simulations. As the theoretical part (@section:rouse) showed, these objects are governed by slow, collective timescales --- often far beyond the reach of atomistic simulations. On a typical mesocenter, one may reach hundreds of nanoseconds, or the microsecond scale for the most ambitious runs, in all-atoms. Yet these remain insufficient to capture the long-time dynamics of chains. Hence, one relies on such simplified models --- not as a compromise, but as a bridge toward the physical essence of the problem.
 
-In this perspective, the Rouse model can in fact reveal something quite interesting. The whole construction --- from the equations to the simulation --- should be understood under this enlightenment. To emphaze this, we now place ourselves in a setup closer to a biological environment. We set the temperature to $T = 310$K, corresponding to the human body temperature, and consider a longer chain with $N = 80$ beads. Following the same procedure as in the previous section, we derive the physical parameters as,
+In this perspective, the Rouse model can in fact reveal something quite interesting. The whole construction --- from the equations to the simulation --- should be understood under this enlightenment. To emphasize this, we now place ourselves in a setup closer to a biological environment. We set the temperature to $T = 310$K, corresponding to the human body temperature, and consider a longer chain with $N = 80$ beads. Following the same procedure as in the previous section, we derive the physical parameters as,
 
 $
     gamma = 10^(-11) #text[kg/s] &, space space m = 10^(-25) #text[kg],\
@@ -573,7 +564,7 @@ $
     angle.l R_e^2 angle.r = 9.36 times 10^(-17) space #text[m]^2 space space ; space space angle.l R_e^2 angle.r_#text[th] = 8.56 times 10^(-17) space #text[m]^2
 $
 
-These values agrees within $~7$%, confirming that the equilibrium structure is correctly captured. The ratio $R_e^2 \/ R_g^2$, shown in @fig:long-re2rg2, oscillates around 6, as theoretically predicted.
+These values agree within $~7$%, confirming that the equilibrium structure is correctly captured. The ratio $R_e^2 \/ R_g^2$, shown in @fig:long-re2rg2, oscillates around 6, as theoretically predicted.
 
 
 #figure(
@@ -596,7 +587,7 @@ These values agrees within $~7$%, confirming that the equilibrium structure is c
 
 == Rouse dynamics
 
-Now comes the time to watch the theoretical derivations of the Rouse model come to life. A first remark: we should not expect to capture the fastest modes, as our time step may be limiting, and more importantly, the simulation is not recorded at every frame --- otherwise, trajectories would quickly fill our disks. But what do Rouse modes actually look like in practice ? @fig:long-rxp shows a few of them projected on the $x$--cordinate. The mode $p =0$ (blue) corresponds to the diffusive motion of the center of mass, while higher modes represent internal fluctuations of increasing frequency and decreasing amplitude.
+Now comes the time to watch the theoretical derivations of the Rouse model come to life. A first remark: we should not expect to capture the fastest modes, as our time step may be limiting, and more importantly, the simulation is not recorded at every frame --- otherwise, trajectories would quickly fill our disks. But what do Rouse modes actually look like in practice ? @fig:long-rxp shows a few of them projected on the $x$--coordinate. The mode $p =0$ (blue) corresponds to the diffusive motion of the center of mass, while higher modes represent internal fluctuations of increasing frequency and decreasing amplitude.
 
 
 #figure(
@@ -608,7 +599,7 @@ Now comes the time to watch the theoretical derivations of the Rouse model come 
 
 To measure the relaxation times of these modes, we follow the procedure outlined in @section:observables, by computing the autocorrelation function of each mode after projecting the trajectories onto the corresponding Rouse basis. @fig:long-autocorr-fit on left shows several of these normalized autocorrelation functions, while on right, the figure presents a typical exponential fit --- here for mode $p=1$. We chose to plot these correlations only over the first $2$ µs, since --- as shown in @fig:long-autocorr-fit and in @fig:long-taus --- the higher the $p$, the faster it decays. Given that the mode $p = 1$ relaxes on a timescale of about 0.6 µs, the signal beyond that is just noise.
 
-Physically, these results show that different modes contribute to the chain dynamics on distinct spatial and temporal scales. Low--$p$ modes represent large-scale, coherent motions of the whole chain and therefore relax slowly. Higher--$p$ modes correspond to short-wavelength internal fluctuations, involving only neighboring segments, which decay much faster. The sharp decrease in relaxation times with increasing $p$ thus reflects a sort of hierarchy --- a hierarchy that is mirrored in the distributed of mode amplitudes. In fact, the mean population of each mode is expected to decrease as $p^(-2)$, reflecting the progressively smaller contribution of higher-order modes to the overal conformational motion.
+Physically, these results show that different modes contribute to the chain dynamics on distinct spatial and temporal scales. Low--$p$ modes represent large-scale, coherent motions of the whole chain and therefore relax slowly. Higher--$p$ modes correspond to short-wavelength internal fluctuations, involving only neighboring segments, which decay much faster. The sharp decrease in relaxation times with increasing $p$ thus reflects a sort of hierarchy --- a hierarchy that is mirrored in the distribution of mode amplitudes. In fact, the mean population of each mode is expected to decrease as $p^(-2)$, reflecting the progressively smaller contribution of higher-order modes to the overall conformational motion.
 
 
 We compute these mode populations from the simulation trajectories and compared them with the theoretical scaling (see @fig:long-pop). While the overall decay follows the expected trend, we observe a clear deviation at large $p$. We believe this deviation mainly reflects finite-size effects, as well as the limited temporal resolution and frame sampling of our simulation --- put differently, high--$p$ modes fluctuate too fast to be fully captured with our parameters.
@@ -644,16 +635,88 @@ In a biological setting, say in the motion of membrane receptors, these fast, hi
 
 = Conclusions
 
-This work was an attempt to bring the Rouse model to life --- not as an abstract theory, but as a tangible object that one can simulation, explore and shape. Starting from Langevin description of coupled Brownian particles, we derived the chain dynamics, implemented the Euler-Maruyama scheme, and validated the physical consistency of the results through diffusion, structural and relaxation analyses. Altogether, the simulations reproduced the expected scaling behaviors and provided a coherent picture of Rouse dynamics.
+This work was an attempt to bring the Rouse model to life --- not as an abstract theory, but as a tangible object that one can simulate, explore and shape. Starting from Langevin's description of coupled Brownian particles, we derived the chain dynamics, implemented the Euler-Maruyama scheme, and validated the physical consistency of the results through diffusion, structural and relaxation analyses. Altogether, the simulations reproduced the expected scaling behaviors and provided a coherent picture of Rouse dynamics.
 
 
 Along the way, this project also offered an introduction to the vocabulary of stochastic differential equations and, more broadly, to some of the key concepts of mesoscopic physics. It is a field that fascinates me, even though it is often a demanding one --- connecting two cliffs that stand on opposite sides is never easy.
 
-From a physical point of view, the Rouse model has since been extended in many ways --- most notably by the Zimm model, which accounts more accurately for hydrodynamic interactions and often provides a closer description of real polymer behavior. Other advances, to my knowledge, have mostly followed this direction. I had initially planned to explore another one: that of constraints. I did not have the time, but the main idea was to constrain a few degrees of freedom --- as would naturally occur, for instance, in a membrane receptor whose backbone is partially trapped within a lipid slab, preventing from moving freely.
+From a physical point of view, the Rouse model has since been extended in many ways --- most notably by the Zimm model, which accounts more accurately for hydrodynamic interactions and often provides a closer description of real polymer behavior. Other advances, to my knowledge, have mostly followed this direction. I had initially planned to explore another one: that of constraints. I did not have the time, but the main idea was to constrain a few degrees of freedom --- as would naturally occur, for instance, in a membrane receptor whose backbone is partially trapped within a lipid slab, preventing it from moving freely.
 
-Still, I do not see this project as finished. Much of the effort was devoted to building a simulation engine that is both solid and modular --- and I hope I have shown that it can serve precisely the purpose to explore physics with flexibility and precision. What happens when I force inclusions into a membrane? What happens when I fix or release certain parts of the chain? I have the feeling that this Common Lisp approach is a natural companion to thought itself. And perhaps, through a few of these delicate tools, it will one day offer a few virtuous insights into the physics of living matter.
+Still, I do not see this project as finished. Much of the effort was devoted to building a simulation engine that is both solid and modular --- and I hope I have shown that it can serve precisely the purpose of exploring physics with flexibility and precision. What happens when I force inclusions into a membrane? What happens when I fix or release certain parts of the chain? I have the feeling that this Common Lisp approach is a natural companion to thought itself. And perhaps, through a few of these delicate tools, it will one day offer a few virtuous insights into the physics of living matter.
 
 
 
 #pagebreak()
+#set page(columns:1, header:[])
 #bibliography(style:"american-physics-society", "rsrc/rouse.bib")
+
+
+#pagebreak()
+#show: appendix
+
+= Installation
+
+The reader most likely does not have a Common Lisp implementation readily available on their system. We therefore outline here, in broad terms, a complete installation procedure to get the project running. The project was developed on macOS, although an equivalent procedure should run on any Unix-like environment.
+
+== Common Lisp & Emacs
+
+Common Lisp exists in many implementations. Among them, *Steel Bank Common Lisp* --- usually referred to as `sbcl` --- is arguably the most mature and performant. It provides a fast compiler, a complete runtime and excellent integration with modern developments tools.
+
+Let us begin by installing `sbcl`. The reader can obtain the latest version directly from the official website, at #link("https://www.sbcl.org/"). Once installed, and since our project relies on several dependencies, we will need a package manager. For Common Lisp, the standard choice is #link("https://www.quicklisp.org/beta/")[*Quicklisp*] whose official website provides a concise and well-written installation guide.
+
+In principle, any text editor will do the job. However, it is far more convenient --- and fitting --- to use #link("https://www.gnu.org/software/emacs/")[*GNU Emacs*], itself written in Lisp. With the addition of the `SLIME` plugin, Emacs becomes a fully interactive Lisp environment, allowing you to evaluate code, inspect data and shape your simulation in real time. Once Emacs, `sbcl` and Quicklisp installed,  the reader simply needs to type `M-x list-packages RET`, search for `SLIME` and click to install it. All the necessary tools are now installed.
+
+
+== `Rouse` installation
+
+The project is available on my GitHub repository at #link("https://github.com/weld-lab/rouse"). To get started, clone it using,
+
+```
+git clone https://github.com/weld-lab/rouse.git
+```
+
+Once this is done, create a configuration file `~/.sbclrc` (if it does not already exist), and add the following lines,
+
+```lisp
+(pushnew #P"~/path/to/rouse" asdf:*central-registry*)
+```
+
+This ensures that Quicklisp can properly locate the project and its dependencies when you start `sbcl`. Next, start `sbcl`. Then, within the Lisp prompt, load the project with,
+
+```lisp
+(ql:quickload "rouse")
+```
+
+This should start the Lisp system and load all required dependencies. Now start Emacs. From within Emacs, open the `SLIME` connection by typing,
+
+```
+M-x slime-connect RET localhost RET 4005 RET
+```
+
+This will start a REPL connected to the Lisp session launched earlier, allowing you to interact directly with the running system. You are now ready to run your first simulation! Try the following thing by typing (or copying/pasting),
+
+```lisp
+(in-package #:rouse)
+
+(defvar *sim*
+  (sim:make-simulation
+   :chain (top:make-linear-chain 20 :along :y :spaced-by 1d-9 :mass 1d-25)
+   :temperature 273.15
+   :gamma 1d-11
+   :k 1.2d-2
+   :dt 1d-13))
+
+(view:view *sim* :mode :ortho-view)
+```
+
+This should open an `OpenGL` window displaying your simulation in real time. From there, you can either refer to the short user manual available at `path/to/rouse/viewer/README.md` or directly call functions from the REPL as you would in any interactive Lisp session. For example,
+
+
+```lisp
+(sim:propagate *sim* :steps 10000)
+```
+
+will run the simulation for 10 nanoseconds.
+
+
+
