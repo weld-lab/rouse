@@ -5,7 +5,7 @@
 (defvar *swank-thread* nil)
 (defvar *engine-running* nil)
 
-(defvar *developer-mode* t)
+(defvar *developer-mode* nil)
 
 (defvar *render-channel* (make-instance 'channel))
 
